@@ -1,0 +1,63 @@
+﻿@using YG.ASPNetCore.FileManager
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YigitGnc.YG.ASPNetCore.FileManager.Test</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/YG.ASPNetCore.FileManager.Test.styles.css" asp-append-version="true" />
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @*YG.AspNetCore.FileManager Styles*@
+    @this.RenderYGfilemanagerCss(true)
+    @*---------------------------------*@
+
+    @await RenderSectionAsync("Styles", required: false)
+
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
+            <div class="container-fluid d-flex justify-content-between">
+                <a class="navbar-brand ps-3 me-1" asp-area="" asp-controller="Home" asp-action="Index">YigitGnc.YG.ASPNetCore.FileManager</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse">
+                    <ul class="navbar-nav flex-grow-1 justify-content-end">
+                        <li class="nav-item">
+                            <a class="nav-link text-light text-nowrap text-center" href="https://www.nuget.org/packages/yigitgnc.YG.ASPNetCore.FileManager/" target="_blank">Nuget Package</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light text-nowrap text-center" href="https://github.com/yigitgnc/YG.ASPNetCore.FileManager/pkgs/nuget/YigitGnc.YG.ASPNetCore.FileManager" target="_blank">Github Package</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container-fluid">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer">
+        <div class="container text-center">
+            YigitGnc.YG.ASPNetCore.FileManager
+        </div>
+    </footer>
+
+    @*YG.AspNetCore.FileManager Scripts*@
+    @this.RenderYGfilemanagerJavaScripts()
+    @*----------------------------------*@
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
