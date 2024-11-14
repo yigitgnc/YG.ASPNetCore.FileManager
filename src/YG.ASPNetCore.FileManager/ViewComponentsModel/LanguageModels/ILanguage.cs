@@ -131,6 +131,9 @@
         /// <summary>Text for decrypt</summary>
         string Decrypt { get; }
 
+        /// <summary>Text for the recycle bin.</summary>
+        string RecycleBin { get; }
+
         // Notifications and Messages
 
         /// <summary>Message shown when no items are selected.</summary>

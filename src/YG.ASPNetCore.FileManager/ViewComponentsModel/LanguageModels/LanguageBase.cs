@@ -132,6 +132,8 @@ namespace YG.ASPNetCore.FileManager.ViewComponentsModel.LanguageModels
 
         public string Decrypt { get; } = null!;
 
+        public string RecycleBin { get; } = null!;
+
         // Notifications and Messages
 
         /// <summary>Message shown when no items are selected.</summary>

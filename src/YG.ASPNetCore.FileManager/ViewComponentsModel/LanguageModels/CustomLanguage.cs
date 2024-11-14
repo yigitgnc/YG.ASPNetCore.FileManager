@@ -45,6 +45,7 @@
         public string EncryptedFileExplanation { get; set; } = "*Not Defined*";
         public string Encrypt { get; set; } = "*Not Defined*";
         public string Decrypt { get; set; } = "*Not Defined*";
+        public string RecycleBin { get; set; } = "*Not Defined*";
 
         // Notifications and Messages
         public string NoItemsSelectedMessage { get; set; } = "*Not Defined*";

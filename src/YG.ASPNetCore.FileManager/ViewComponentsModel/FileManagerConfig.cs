@@ -98,13 +98,16 @@ namespace YG.ASPNetCore.FileManager.ViewComponentsModel
         /// </remarks>
         [Required(ErrorMessage = "EncryptionKey must be provided if UseEncryption is true.")]
         [JsonIgnore] // To prevent JSON serialization of sensitive information
-        public string EncryptionKey { get; set; } = string.Empty;
-
+        public string EncryptionKey { get; set; } = "your_encryption_key_here_for_encryption_purposes";
 
         /// <summary>
         /// Use encryption (EncryptionKey must be provided if UseEncryption is true.)
         /// </summary>
         public bool UseEncryption { get; set; } = false;
-        
+
+        /// <summary>
+        /// Use Recycle Bin (default is true)
+        /// </summary>
+        public bool UseRecycleBin { get; set; } = true;
     }
 }

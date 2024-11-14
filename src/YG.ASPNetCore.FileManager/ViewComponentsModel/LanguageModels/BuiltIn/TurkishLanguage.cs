@@ -48,6 +48,7 @@ namespace YG.ASPNetCore.FileManager.ViewComponentsModel.LanguageModels.BuiltIn
         public string EncryptedFileExplanation { get; set; } = "Şifreli dosyalar yalnızca bu arayüz üzerinden değiştirilebilir ve dosya yöneticisi tarafından müdahale edilemez. Şifreli dosyalara doğrudan erişim sağlansa bile, bu arayüz yetkisine sahip olmayan kişiler dosyaların içeriğini göremez.";
         public string Encrypt { get; set; } = "Şifrele";
         public string Decrypt { get; set; } = "Şifreyi Kaldır";
+        public string RecycleBin { get; set; } = "Geri Dönüşüm Kutusu";
 
         public string EnterNewFolderNameMessage { get; } = "Lütfen klasör adını girin:";
         public string EnterNewFileNameMessage { get; } = "Lütfen istediğiniz dosya adını girin:";

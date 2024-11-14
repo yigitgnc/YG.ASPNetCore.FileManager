@@ -316,6 +316,15 @@ public class FileManagerCommandsProcessor : IFileManagerCommandsProcessor
             physicalPath = physicalRootPath;
         }
 
+        if (FileManagerComponent.ConfigStorage[id].UseRecycleBin)
+        {
+            //check if recycle bin exists
+            if (!Directory.Exists(Path.Combine(physicalRootPath, $"recyclebin-{id}")))
+            {
+                Directory.CreateDirectory(Path.Combine(physicalRootPath, $"recyclebin-{id}"));
+            }
+        }
+
         //Delete selected files/folders
         foreach (var item in commandParameters.Items)
         {
@@ -325,11 +334,25 @@ public class FileManagerCommandsProcessor : IFileManagerCommandsProcessor
             {
                 if (Directory.Exists(physicalItemPathToDelete))
                 {
-                    Directory.Delete(physicalItemPathToDelete, true);
+                    if (FileManagerComponent.ConfigStorage[id].UseRecycleBin && !physicalItemPathToDelete.Contains($"\\recyclebin-{id}\\"))
+                    {
+                        Directory.Move(physicalItemPathToDelete, Path.Combine(physicalRootPath, $"recyclebin-{id}", Path.GetFileName(physicalItemPathToDelete)));
+                    }
+                    else
+                    {
+                        Directory.Delete(physicalItemPathToDelete, true);
+                    }
                 }
                 else if (File.Exists(physicalItemPathToDelete))
                 {
-                    File.Delete(physicalItemPathToDelete);
+                    if (FileManagerComponent.ConfigStorage[id].UseRecycleBin && !physicalItemPathToDelete.Contains($"\\recyclebin-{id}\\"))
+                    {
+                        File.Move(physicalItemPathToDelete, Path.Combine(physicalRootPath, $"recyclebin-{id}", Path.GetFileName(physicalItemPathToDelete)));
+                    }
+                    else
+                    {
+                        File.Delete(physicalItemPathToDelete);
+                    }
                 }
             }
         }
