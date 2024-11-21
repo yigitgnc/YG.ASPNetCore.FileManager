@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net9.0</TargetFramework>
 		<!--for my ftp server nothing related with actual project-->
 		<AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel> 
 		<!---->
