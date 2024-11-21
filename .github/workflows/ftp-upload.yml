@@ -19,13 +19,13 @@ jobs:
           dotnet-version: '9.0.x'
 
       - name: Restore dependencies for specific project
-        run: dotnet restore test/HGO.ASPNetCore.FileManager.Test/HGO.ASPNetCore.FileManager.Test.csproj
+        run: dotnet restore test/YG.ASPNetCore.FileManager.Test/YG.ASPNetCore.FileManager.Test.csproj
 
       - name: Build the specific project
-        run: dotnet build test/HGO.ASPNetCore.FileManager.Test/HGO.ASPNetCore.FileManager.Test.csproj --configuration Release 
+        run: dotnet build test/YG.ASPNetCore.FileManager.Test/YG.ASPNetCore.FileManager.Test.csproj --configuration Release 
 
       - name: Publish the specific project
-        run: dotnet publish test/HGO.ASPNetCore.FileManager.Test/HGO.ASPNetCore.FileManager.Test.csproj --configuration Release --output ./publish 
+        run: dotnet publish test/YG.ASPNetCore.FileManager.Test/YG.ASPNetCore.FileManager.Test.csproj --configuration Release --output ./publish 
 
       - name: Create app_offline.htm
         run: |
