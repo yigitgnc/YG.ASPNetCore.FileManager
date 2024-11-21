@@ -27,7 +27,7 @@ jobs:
       - name: Check for Existing Tag
         id: check_tags
         run: |
-          TAG_EXISTS=$(git tag --list "${{ env.CURRENT_VERSION }}")
+          TAG_EXISTS=$(git tag -l "${{ env.CURRENT_VERSION }}")
           if [ -n "$TAG_EXISTS" ]; then
             echo "TAG_EXISTS=true" >> $GITHUB_ENV
           else
@@ -38,10 +38,11 @@ jobs:
         id: handle_versioning
         run: |
           if [ "${{ env.TAG_EXISTS }}" == "true" ]; then
-            # Increment the patch version if the tag exists
+            # Increment version by patch (e.g. 9.0.2 -> 9.0.3)
             IFS='.' read -r MAJOR MINOR PATCH <<< "${{ env.CURRENT_VERSION }}"
             NEW_PATCH=$((PATCH + 1))
             NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
+            # Update the version in csproj file
             sed -i "s|<Version>${{ env.CURRENT_VERSION }}</Version>|<Version>$NEW_VERSION</Version>|" src/YG.ASPNetCore.FileManager/YG.ASPNetCore.FileManager.csproj
             echo "FINAL_VERSION=$NEW_VERSION" >> $GITHUB_ENV
           else
@@ -49,23 +50,19 @@ jobs:
             echo "FINAL_VERSION=${{ env.CURRENT_VERSION }}" >> $GITHUB_ENV
           fi
 
-      - name: Create or Update Git Tag
+      - name: Create Git Tag
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Commit changes if the working directory is dirty
+          # Commit changes if the version has been updated
           if [ -n "$(git status --porcelain)" ]; then
             git commit -am "Prepare release ${{ env.FINAL_VERSION }}"
           fi
 
-          # If the tag exists, delete the old local tag and create a new one
-          git tag -d "${{ env.FINAL_VERSION }}" || echo "Tag not found locally, skipping delete"
-
-          # Create the new tag and push it
+          # Create and push the new tag
           git tag "${{ env.FINAL_VERSION }}"
-          git push origin --force "${{ env.FINAL_VERSION }}"
-          git push
+          git push origin "${{ env.FINAL_VERSION }}"
 
       - name: Restore Dependencies
         run: dotnet restore
