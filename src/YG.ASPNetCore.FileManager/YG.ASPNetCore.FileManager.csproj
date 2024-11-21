@@ -34,11 +34,9 @@
 		<PackageId>$(AssemblyName)</PackageId>
 		<AssemblyVersion>1.0.0.0</AssemblyVersion>
 		<FileVersion>1.0.0.0</FileVersion>
-		<Version>9.0.1</Version>
+		<Version>9.0.2</Version>
 		<PackageReleaseNotes>
-			-Built-in Recycle Bin
-			-File Encryption
-			-Multipe Language Support
+			-package cleanup
 		</PackageReleaseNotes>
 	</PropertyGroup>
 
@@ -46,11 +44,6 @@
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="9.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
 		<PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="9.0.0" />
-		<PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.7.1">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="SharpCompress" Version="0.38.0" />
 		<PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.0" />
 		<PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.0" />
@@ -63,9 +56,4 @@
 		<None Include="README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<EmbeddedResource Update="ygfilemanager\images\recyclebin.png">
-			<Pack>false</Pack>
-		</EmbeddedResource>
-	</ItemGroup>
 </Project>

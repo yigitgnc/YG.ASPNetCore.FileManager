@@ -5,7 +5,7 @@
 
 @{
     Layout = null;
-    bool darkMode = ViewContext.HttpContext.Session.GetString("YgFileManagerTheme") == "Dark";
+    bool darkMode = ViewContext.HttpContext.Session.GetString("ygfilemanagerTheme") == "Dark";
     var viewModel = TempData["model"] as EditViewModel;
 }
 

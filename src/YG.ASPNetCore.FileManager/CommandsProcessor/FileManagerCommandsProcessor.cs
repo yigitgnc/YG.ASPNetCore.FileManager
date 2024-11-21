@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Primitives;
-using Newtonsoft.Json;
-using SharpCompress.Archives;
 using SharpCompress.Archives.Zip;
 using SharpCompress.Common;
 using SharpCompress.Readers;
@@ -15,8 +13,7 @@ using System.Text;
 using YG.ASPNetCore.FileManager.Enums;
 using YG.ASPNetCore.FileManager.ViewModels;
 using YG.ASPNetCore.FileManager.Helpers;
-using System.IO;
-using System.IO.Pipes;
+using System.Text.Json;
 
 namespace YG.ASPNetCore.FileManager.CommandsProcessor;
 
@@ -41,7 +38,7 @@ public class FileManagerCommandsProcessor : IFileManagerCommandsProcessor
         {
             return new ContentResult()
             {
-                Content = JsonConvert.SerializeObject(new { Error = FileManagerComponent.ConfigStorage[id].Language.UnknownCommandErrorMessage })
+                Content =   JsonSerializer.Serialize(new { Error = FileManagerComponent.ConfigStorage[id].Language.UnknownCommandErrorMessage })
             };
         }
 
@@ -50,7 +47,7 @@ public class FileManagerCommandsProcessor : IFileManagerCommandsProcessor
         {
             return new ContentResult()
             {
-                Content = JsonConvert.SerializeObject(new { Error = FileManagerComponent.ConfigStorage[id].Language.ActionDisabledErrorMessage })
+                Content = JsonSerializer.Serialize(new { Error = FileManagerComponent.ConfigStorage[id].Language.ActionDisabledErrorMessage })
             };
         }
 
@@ -65,48 +62,48 @@ public class FileManagerCommandsProcessor : IFileManagerCommandsProcessor
                         result.Content = GetContent(id, parameters);
                         return result;
                     case Command.Search:
-                        result.Content = Search(id, JsonConvert.DeserializeObject<SearchCommandParameters>(parameters) ?? new());
+                        result.Content = Search(id, JsonSerializer.Deserialize<SearchCommandParameters>(parameters) ?? new());
                         return result;
                     case Command.CreateNewFolder:
                         result.Content = CreateNewFolder(id,
-                            JsonConvert.DeserializeObject<CreateNewFolderCommandParameters>(parameters) ?? new());
+                            JsonSerializer.Deserialize<CreateNewFolderCommandParameters>(parameters) ?? new());
                         return result;
                     case Command.CreateNewFile:
                         result.Content = CreateNewFile(id,
-                            JsonConvert.DeserializeObject<CreateNewFileCommandParameters>(parameters) ?? new());
+                            JsonSerializer.Deserialize<CreateNewFileCommandParameters>(parameters) ?? new());
                         return result;
                     case Command.Delete:
                         result.Content = Delete(id,
-                            JsonConvert.DeserializeObject<DeleteCommandParameters>(parameters) ?? new());
+                            JsonSerializer.Deserialize<DeleteCommandParameters>(parameters) ?? new());
                         return result;
                     case Command.Rename:
                         result.Content = Rename(id,
-                            JsonConvert.DeserializeObject<RenameCommandParameters>(parameters) ?? new());
+                            JsonSerializer.Deserialize<RenameCommandParameters>(parameters) ?? new());
                         return result;
                     case Command.Encrypt:
                     case Command.Decrypt:
                         result.Content = EncryptOrDecrypt(
                             id,
-                            JsonConvert.DeserializeObject<EncryptionCommandParameters>(parameters) ?? new(),
+                            JsonSerializer.Deserialize<EncryptionCommandParameters>(parameters) ?? new(),
                             command
                             );
                         return result;
                     case Command.Zip:
                         result.Content = Zip(id,
-                            JsonConvert.DeserializeObject<ZipCommandParameters>(parameters) ?? new());
+                            JsonSerializer.Deserialize<ZipCommandParameters>(parameters) ?? new());
                         return result;
                     case Command.Unzip:
                         result.Content = UnZip(id,
-                            JsonConvert.DeserializeObject<UnZipCommandParameters>(parameters) ?? new());
+                            JsonSerializer.Deserialize<UnZipCommandParameters>(parameters) ?? new());
                         return result;
                     case Command.Copy:
                     case Command.Cut:
                         result.Content = CopyCutItems(id, command,
-                            JsonConvert.DeserializeObject<CopyCutCommandParameters>(parameters) ?? new());
+                            JsonSerializer.Deserialize<CopyCutCommandParameters>(parameters) ?? new());
                         return result;
                     case Command.EditFile:
                         return EditFile(id,
-                            JsonConvert.DeserializeObject<EditFileCommandParameters>(parameters) ?? new());
+                            JsonSerializer.Deserialize<EditFileCommandParameters>(parameters) ?? new());
                     case Command.Download:
                         return Download(id, parameters, false);
                     case Command.View:
@@ -118,14 +115,14 @@ public class FileManagerCommandsProcessor : IFileManagerCommandsProcessor
                     case Command.FilePreview:
                         return FilePreview(id, parameters);
                     default:
-                        result.Content = JsonConvert.SerializeObject(new { Error = FileManagerComponent.ConfigStorage[id].Language.UnknownCommandErrorMessage });
+                        result.Content = JsonSerializer.Serialize(new { Error = FileManagerComponent.ConfigStorage[id].Language.UnknownCommandErrorMessage });
                         return result;
                 }
             }
             catch (Exception e)
             {
                 var physicalRootPath = GetCurrentSessionPhysicalRootPath(id);
-                result.Content = JsonConvert.SerializeObject(string.IsNullOrWhiteSpace(physicalRootPath)
+                result.Content = JsonSerializer.Serialize(string.IsNullOrWhiteSpace(physicalRootPath)
                     ? new { Error = e.Message }
                     : new { Error = e.Message.Replace(physicalRootPath.TrimEnd(Path.DirectorySeparatorChar), "Root") });
                 return result;
@@ -1081,7 +1078,7 @@ public class FileManagerCommandsProcessor : IFileManagerCommandsProcessor
         {
             return new ContentResult
             {
-                Content = JsonConvert.SerializeObject(new
+                Content = JsonSerializer.Serialize(new
                 {
                     message = FileManagerComponent.ConfigStorage[id].Language.NotEnoughSpaceErrorMessage,
                 })
@@ -1093,7 +1090,7 @@ public class FileManagerCommandsProcessor : IFileManagerCommandsProcessor
         {
             return new ContentResult
             {
-                Content = JsonConvert.SerializeObject(new
+                Content = JsonSerializer.Serialize(new
                 {
                     message = FileManagerComponent.ConfigStorage[id].Language.InvalidRootPathErrorMessage
                 })
@@ -1106,7 +1103,7 @@ public class FileManagerCommandsProcessor : IFileManagerCommandsProcessor
         {
             return new ContentResult
             {
-                Content = JsonConvert.SerializeObject(new
+                Content = JsonSerializer.Serialize(new
                 {
                     message = FileManagerComponent.ConfigStorage[id].Language.NotFoundErrorMessage
                 })
@@ -1128,7 +1125,7 @@ public class FileManagerCommandsProcessor : IFileManagerCommandsProcessor
                 {
                     return new ContentResult
                     {
-                        Content = JsonConvert.SerializeObject(new
+                        Content = JsonSerializer.Serialize(new
                         {
                             message = " The file is encrypted and cannot be edited without decrypting it first."
                         })
@@ -1151,14 +1148,14 @@ public class FileManagerCommandsProcessor : IFileManagerCommandsProcessor
 
             return new ContentResult
             {
-                Content = JsonConvert.SerializeObject(new { message = "OK" })
+                Content = JsonSerializer.Serialize(new { message = "OK" })
             };
         }
         catch (Exception e)
         {
             return new ContentResult
             {
-                Content = JsonConvert.SerializeObject(new
+                Content = JsonSerializer.Serialize(new
                 {
                     message = e.Message.Replace(physicalRootPath.TrimEnd(Path.DirectorySeparatorChar), "Root")
                 })

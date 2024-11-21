@@ -27,31 +27,32 @@ jobs:
       - name: Check for Existing Tag
         id: check_tags
         run: |
-          TAG_EXISTS=$(git tag --list "${{ env.CURRENT_VERSION }}" | wc -l)
-          echo "TAG_EXISTS=$TAG_EXISTS" >> $GITHUB_ENV
+          if git rev-parse "refs/tags/${{ env.CURRENT_VERSION }}" >/dev/null 2>&1; then
+            echo "TAG_EXISTS=true" >> $GITHUB_ENV
+          else
+            echo "TAG_EXISTS=false" >> $GITHUB_ENV
+          fi
 
-      - name: Increment Version
-        id: increment_version
-        if: env.TAG_EXISTS == '0'
+      - name: Handle Versioning
+        id: handle_versioning
         run: |
-          IFS='.' read -r MAJOR MINOR PATCH <<< "${{ env.CURRENT_VERSION }}"
-          NEW_PATCH=$((PATCH + 1))
-          NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
-          sed -i "s|<Version>${{ env.CURRENT_VERSION }}</Version>|<Version>$NEW_VERSION</Version>|" src/YG.ASPNetCore.FileManager/YG.ASPNetCore.FileManager.csproj
-          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          if [ "${{ env.TAG_EXISTS }}" == "true" ]; then
+            IFS='.' read -r MAJOR MINOR PATCH <<< "${{ env.CURRENT_VERSION }}"
+            NEW_PATCH=$((PATCH + 1))
+            NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
+            sed -i "s|<Version>${{ env.CURRENT_VERSION }}</Version>|<Version>$NEW_VERSION</Version>|" src/YG.ASPNetCore.FileManager/YG.ASPNetCore.FileManager.csproj
+            echo "FINAL_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          else
+            echo "FINAL_VERSION=${{ env.CURRENT_VERSION }}" >> $GITHUB_ENV
+          fi
 
-      - name: Skip Version Increment (Tag Already Exists)
-        if: env.TAG_EXISTS != '0'
-        run: echo "Tag for version ${{ env.CURRENT_VERSION }} already exists. Skipping version increment."
-
-      - name: Create New Git Tag
-        if: env.TAG_EXISTS == '0'
+      - name: Create Git Tag
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git commit -am "Bump version to ${{ env.NEW_VERSION }}"
-          git tag "${{ env.NEW_VERSION }}"
-          git push origin "${{ env.NEW_VERSION }}"
+          git commit -am "Prepare release ${{ env.FINAL_VERSION }}"
+          git tag "${{ env.FINAL_VERSION }}"
+          git push origin "${{ env.FINAL_VERSION }}"
           git push
 
       - name: Restore Dependencies

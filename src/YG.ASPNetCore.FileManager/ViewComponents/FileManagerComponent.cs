@@ -1,8 +1,6 @@
 ﻿using YG.ASPNetCore.FileManager.ViewComponentsModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using System.Text.Json.Serialization;
 
 namespace YG.ASPNetCore.FileManager.ViewComponents
 {

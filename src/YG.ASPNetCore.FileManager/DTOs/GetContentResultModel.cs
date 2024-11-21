@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json;
 
 namespace YG.ASPNetCore.FileManager.DTOs
 {
@@ -9,7 +9,7 @@ namespace YG.ASPNetCore.FileManager.DTOs
         public string CurrentPath { get; set; } = string.Empty;
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return  JsonSerializer.Serialize(this);
         }
     }
 
