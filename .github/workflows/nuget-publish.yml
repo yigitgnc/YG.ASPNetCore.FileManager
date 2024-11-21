@@ -59,9 +59,12 @@ jobs:
             git commit -am "Prepare release ${{ env.FINAL_VERSION }}"
           fi
 
-          # Create a new tag and push it, but only if it's different from the existing one
+          # Delete the old tag if it exists locally (necessary to overwrite)
+          git tag -d "${{ env.FINAL_VERSION }}" || echo "Tag not found locally, skipping delete"
+
+          # Create and push the new tag
           git tag "${{ env.FINAL_VERSION }}"
-          git push origin "${{ env.FINAL_VERSION }}"
+          git push origin --force "${{ env.FINAL_VERSION }}"
           git push
 
       - name: Restore Dependencies
