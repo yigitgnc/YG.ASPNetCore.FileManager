@@ -24,6 +24,9 @@ jobs:
           CURRENT_VERSION=$(grep -oP '(?<=<Version>).*?(?=</Version>)' src/YG.ASPNetCore.FileManager/YG.ASPNetCore.FileManager.csproj)
           echo "CURRENT_VERSION=$CURRENT_VERSION" >> $GITHUB_ENV
 
+      - name: Fetch Remote Tags
+        run: git fetch --tags
+
       - name: Check for Existing Tag
         id: check_tags
         run: |
