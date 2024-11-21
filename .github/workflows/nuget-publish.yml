@@ -59,10 +59,10 @@ jobs:
             git commit -am "Prepare release ${{ env.FINAL_VERSION }}"
           fi
 
-          # Delete the old tag if it exists locally (necessary to overwrite)
+          # If the tag exists, delete the old local tag and create a new one
           git tag -d "${{ env.FINAL_VERSION }}" || echo "Tag not found locally, skipping delete"
 
-          # Create and push the new tag
+          # Create the new tag and push it
           git tag "${{ env.FINAL_VERSION }}"
           git push origin --force "${{ env.FINAL_VERSION }}"
           git push
