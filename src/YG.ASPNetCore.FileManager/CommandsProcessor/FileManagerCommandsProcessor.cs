@@ -336,7 +336,11 @@ public class FileManagerCommandsProcessor : IFileManagerCommandsProcessor
                 {
                     if (FileManagerComponent.ConfigStorage[id].UseRecycleBin && !physicalItemPathToDelete.Contains($"\\recyclebin-{id}\\"))
                     {
-                        Directory.Move(physicalItemPathToDelete, Path.Combine(physicalRootPath, $"recyclebin-{id}", Path.GetFileName(physicalItemPathToDelete)));
+                        CopyCutItems(id, Command.Cut, new CopyCutCommandParameters
+                        {
+                            Items = new List<string> { item },
+                            Path = Path.Combine(physicalRootPath, $"recyclebin-{id}")
+                        });
                     }
                     else
                     {
@@ -347,7 +351,11 @@ public class FileManagerCommandsProcessor : IFileManagerCommandsProcessor
                 {
                     if (FileManagerComponent.ConfigStorage[id].UseRecycleBin && !physicalItemPathToDelete.Contains($"\\recyclebin-{id}\\"))
                     {
-                        File.Move(physicalItemPathToDelete, Path.Combine(physicalRootPath, $"recyclebin-{id}", Path.GetFileName(physicalItemPathToDelete)));
+                        CopyCutItems(id, Command.Cut, new CopyCutCommandParameters
+                        {
+                            Items = new List<string> { item },
+                            Path = Path.Combine(physicalRootPath, $"recyclebin-{id}")
+                        });
                     }
                     else
                     {

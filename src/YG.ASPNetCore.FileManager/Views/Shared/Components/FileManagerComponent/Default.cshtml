@@ -493,12 +493,14 @@
                 function (evt, data) {
                     if (!@Model.Config.DisabledFunctions.ContainsToStringToLower(Command.Browse)) {
                         if (data.event.type === 'click') {
+                            console.log(data);
+                            console.log(data.node);
                             if (data.node.parent === "#") {
                                 //Click on root node
                                 self.goUpFolder();
                             } else {
                                 //Click on child nodes
-                                self.getFolderContent(self.getCurrentPath() + "\\" + data.node.text);
+                                self.getFolderContent(data.node.id);
                             }
                         }
                     } else {
@@ -655,44 +657,73 @@
 
             let jsTreeNodes = [];
 
+            // Separate array for the recycle bin to prioritize it
+            let recycleBinNode = null;
+
             $.each(data.Folders, function (idx, folder) {
+                let dataSrc = '/ygfilemanager/images/folder.png'; // Default icon
 
-                jsTreeNodes.push({
-                    'text': folder.FolderName,
-                    'state': {
-                        'opened': false,
-                        'selected': false
-                    }
-                });
+                // Check if folder is recycle bin
+                if (folder.FolderName == 'recyclebin-@Model.Id') {
+                    folder.FolderName = "@Model.Config.Language.RecycleBin";
+                    dataSrc = '/ygfilemanager/images/recyclebin.png'; // Image for display
 
+                    // Store recycle bin node separately to add it at the top
+                    recycleBinNode = {
+                        'id': folder.VirtualPath,
+                        'text': folder.FolderName,
+                        'icon': '/ygfilemanager/images/recyclebin.png',
+                        'state': {
+                            'opened': false,
+                            'selected': false
+                        }
+                    };
+                } else {
+                    jsTreeNodes.push({
+                        'id': folder.VirtualPath,
+                        'text': folder.FolderName,
+                        'state': {
+                            'opened': false,
+                            'selected': false
+                        }
+                    });
+                }
+
+                // Create folder display items
                 let fsItemDiv = document.createElement('div');
-                fsItemDiv.setAttribute('title', '@Model.Config.Language.FolderName: ' + folder.FolderName + '\n' + '@Model.Config.Language.CreateDate: ' + folder.CreateDate + '\n' + '@Model.Config.Language.ModifiedDate: ' + folder.ModifiedDate);
+                fsItemDiv.setAttribute('title', '@Model.Config.Language.FolderName: ' + folder.FolderName + '\n' +
+                '@Model.Config.Language.CreateDate: ' + folder.CreateDate + '\n' +
+                '@Model.Config.Language.ModifiedDate: ' + folder.ModifiedDate);
                 fsItemDiv.setAttribute('path', folder.VirtualPath);
                 fsItemDiv.setAttribute('item-type', 'folder');
                 fsItemDiv.classList.add('fsitem');
                 if (!@Model.Config.DisabledFunctions.ContainsToStringToLower(Command.Browse)) {
-
                     fsItemDiv.addEventListener('dblclick', (e) => {
-                        e.stopPropagation();
-                        let path = e.currentTarget.getAttribute('path');
-                        self.getFolderContent(path);
-                    });
 
-                }
+                   e.stopPropagation();
+                   let path = e.currentTarget.getAttribute('path');
+                   self.getFolderContent(path);
+               });
+            }
 
+            let fsItemImg = document.createElement('img');
+            fsItemImg.classList.add('lozad');
+            fsItemImg.src = '/ygfilemanager/images/loading.gif';
+            fsItemImg.setAttribute('data-src', dataSrc);
+            fsItemDiv.appendChild(fsItemImg);
 
-                let fsItemImg = document.createElement('img');
-                fsItemImg.classList.add('lozad');
-                fsItemImg.src = '/ygfilemanager/images/loading.gif';
-                fsItemImg.setAttribute('data-src', '/ygfilemanager/images/folder.png');
-                fsItemDiv.appendChild(fsItemImg);
+            let fsItemSpan = document.createElement('span');
+            fsItemSpan.innerText = folder.FolderName;
+            fsItemDiv.appendChild(fsItemSpan);
 
-                let fsItemSpan = document.createElement('span');
-                fsItemSpan.innerText = folder.FolderName;
-                fsItemDiv.appendChild(fsItemSpan);
-
-                selectDiv.appendChild(fsItemDiv);
+            selectDiv.appendChild(fsItemDiv);
             });
+
+            // Add the recycle bin node at the top if it exists
+            if (recycleBinNode) {
+                jsTreeNodes.unshift(recycleBinNode);
+            }
+
 
             data.Files.forEach((file) => {
                 let encryptionStatusText = file.IsEncrypted ? '@Model.Config.Language.IsEncrypted' : '@Model.Config.Language.Unencrypted';
@@ -753,10 +784,19 @@
 
             });
 
+            let currentPathText = currentPath;
+            let jsTreeCoreIcon = null;
+
+            if(currentPath.includes('recyclebin-@Model.Id')) {
+                currentPathText = 'Root\\@Model.Config.Language.RecycleBin';
+                jsTreeCoreIcon = '/ygfilemanager/images/recyclebin.png';
+            }
+
             this.jsTree.settings.core.data = [
 
                 {
-                    'text': currentPath,
+                    'text': currentPathText,
+                    'icon': jsTreeCoreIcon,
                     'state': {
                         'opened': true,
                         'selected': false
@@ -891,6 +931,7 @@
             }
 
             folder = folder.replace(/\\+$/, '') + "\\";
+            console.log(folder);
             this.#WaitingPanel();
             $.post(this.apiUrl, {
                 id: this.thisId,

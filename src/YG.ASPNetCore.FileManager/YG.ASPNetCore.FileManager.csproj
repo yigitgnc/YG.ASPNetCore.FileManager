@@ -55,4 +55,10 @@
 		<None Include="Logo.png" Pack="true" PackagePath="\" />
 		<None Include="README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="ygfilemanager\images\recyclebin.png">
+	    <Pack>false</Pack>
+	  </EmbeddedResource>
+	</ItemGroup>
 </Project>
