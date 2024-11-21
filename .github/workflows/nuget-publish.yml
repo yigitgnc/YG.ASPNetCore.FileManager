@@ -16,38 +16,45 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '7.0.x'
+          dotnet-version: '9.0.x'
+
+      - name: Get Current Version
+        id: get_current_version
+        run: |
+          CURRENT_VERSION=$(grep -oP '(?<=<Version>).*?(?=</Version>)' src/YG.ASPNetCore.FileManager/YG.ASPNetCore.FileManager.csproj)
+          echo "CURRENT_VERSION=$CURRENT_VERSION" >> $GITHUB_ENV
+
+      - name: Check for Existing Tag
+        id: check_tags
+        run: |
+          TAG_EXISTS=$(git tag --list "${{ env.CURRENT_VERSION }}" | wc -l)
+          echo "TAG_EXISTS=$TAG_EXISTS" >> $GITHUB_ENV
 
       - name: Increment Version
         id: increment_version
+        if: env.TAG_EXISTS == '0'
         run: |
-          CURRENT_VERSION=$(grep -oP '(?<=<Version>).*?(?=</Version>)' src/YG.ASPNetCore.FileManager/YG.ASPNetCore.FileManager.csproj)
-          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
+          IFS='.' read -r MAJOR MINOR PATCH <<< "${{ env.CURRENT_VERSION }}"
           NEW_PATCH=$((PATCH + 1))
           NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
-          sed -i "s|<Version>$CURRENT_VERSION</Version>|<Version>$NEW_VERSION</Version>|" src/YG.ASPNetCore.FileManager/YG.ASPNetCore.FileManager.csproj
+          sed -i "s|<Version>${{ env.CURRENT_VERSION }}</Version>|<Version>$NEW_VERSION</Version>|" src/YG.ASPNetCore.FileManager/YG.ASPNetCore.FileManager.csproj
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
-      - name: Check for existing tags
-        id: check_tags
-        run: |
-          TAG_EXISTS=$(git tag --list "${{ env.NEW_VERSION }}" | wc -l)
-          echo "TAG_EXISTS=$TAG_EXISTS" >> $GITHUB_ENV
+      - name: Skip Version Increment (Tag Already Exists)
+        if: env.TAG_EXISTS != '0'
+        run: echo "Tag for version ${{ env.CURRENT_VERSION }} already exists. Skipping version increment."
 
-      - name: Create new Git tag if it doesn't exist
+      - name: Create New Git Tag
+        if: env.TAG_EXISTS == '0'
         run: |
-          if [ "${{ env.TAG_EXISTS }}" -eq 0 ]; then
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git commit -am "Bump version to ${{ env.NEW_VERSION }}"
-            git tag "${{ env.NEW_VERSION }}"
-            git push origin "${{ env.NEW_VERSION }}"
-            git push
-          else
-            echo "Tag ${{ env.NEW_VERSION }} already exists. Skipping tag creation."
-          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -am "Bump version to ${{ env.NEW_VERSION }}"
+          git tag "${{ env.NEW_VERSION }}"
+          git push origin "${{ env.NEW_VERSION }}"
+          git push
 
-      - name: Restore dependencies
+      - name: Restore Dependencies
         run: dotnet restore
 
       - name: Build
