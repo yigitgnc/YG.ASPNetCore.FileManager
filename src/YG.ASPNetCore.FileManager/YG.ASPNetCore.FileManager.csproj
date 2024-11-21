@@ -34,7 +34,7 @@
 		<PackageId>$(AssemblyName)</PackageId>
 		<AssemblyVersion>1.0.0.0</AssemblyVersion>
 		<FileVersion>1.0.0.0</FileVersion>
-		<Version>0.0.0</Version>
+		<Version>6.0.0</Version>
 		<PackageReleaseNotes>
 			-Built-in Recycle Bin
 			-File Encryption
