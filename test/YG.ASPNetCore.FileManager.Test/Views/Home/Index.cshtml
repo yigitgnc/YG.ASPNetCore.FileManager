@@ -106,6 +106,13 @@
 
                             <div class="col-12 col-sm-6 col-md-4 col-lg-4 col-xxl-4">
                                 <div class="form-check form-switch d-flex flex-column align-items-center justify-content-center ps-0">
+                                    <label class="form-check-label text-center mb-2" for="SwitchCheck_@nameof(Model.UseRecycleBin)">Use Recycle Bin</label>
+                                    <input asp-for="UseRecycleBin" class="form-check-input ms-0" type="checkbox" id="SwitchCheck_@nameof(Model.UseRecycleBin)">
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-4 col-xxl-4">
+                                <div class="form-check form-switch d-flex flex-column align-items-center justify-content-center ps-0">
                                     <label class="form-check-label text-center mb-2" for="SwitchCheck_@nameof(Model.UseEncryption)">Use Encryption</label>
                                     <input asp-for="UseEncryption" class="form-check-input ms-0" type="checkbox" id="SwitchCheck_@nameof(Model.UseEncryption)">
                                 </div>
