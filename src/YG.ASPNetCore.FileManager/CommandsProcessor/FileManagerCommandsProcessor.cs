@@ -334,7 +334,7 @@ public class FileManagerCommandsProcessor : IFileManagerCommandsProcessor
             {
                 if (Directory.Exists(physicalItemPathToDelete))
                 {
-                    if (FileManagerComponent.ConfigStorage[id].UseRecycleBin && !physicalItemPathToDelete.Contains($"\\recyclebin-{id}\\"))
+                    if (FileManagerComponent.ConfigStorage[id].UseRecycleBin && !physicalItemPathToDelete.Contains($"\\recyclebin-{id}"))
                     {
                         CopyCutItems(id, Command.Cut, new CopyCutCommandParameters
                         {
@@ -349,7 +349,7 @@ public class FileManagerCommandsProcessor : IFileManagerCommandsProcessor
                 }
                 else if (File.Exists(physicalItemPathToDelete))
                 {
-                    if (FileManagerComponent.ConfigStorage[id].UseRecycleBin && !physicalItemPathToDelete.Contains($"\\recyclebin-{id}\\"))
+                    if (FileManagerComponent.ConfigStorage[id].UseRecycleBin && !physicalItemPathToDelete.Contains($"\\recyclebin-{id}"))
                     {
                         CopyCutItems(id, Command.Cut, new CopyCutCommandParameters
                         {
