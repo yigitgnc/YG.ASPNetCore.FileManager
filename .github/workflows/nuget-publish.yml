@@ -59,7 +59,7 @@ jobs:
             git commit -am "Prepare release ${{ env.FINAL_VERSION }}"
           fi
 
-          # Create the new tag
+          # Create a new tag and push it, but only if it's different from the existing one
           git tag "${{ env.FINAL_VERSION }}"
           git push origin "${{ env.FINAL_VERSION }}"
           git push
