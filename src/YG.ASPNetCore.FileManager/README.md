@@ -2,11 +2,14 @@
 
 #### YG.ASPNetCore.FileManager is an "enhanced" fork of HGO.ASPNetCore.FileManager free, open source, feature rich and easy to use file explorer/manager component for ASP.Net Core 6 and above with MIT license!
 
-[![NuGet version (YG.ASPNetCore.FileManager)](https://img.shields.io/nuget/v/YG.ASPNetCore.FileManager)](https://www.nuget.org/packages/YG.ASPNetCore.FileManager/)  ![NuGet Downloads](https://img.shields.io/nuget/dt/Hgo.ASPNetCore.FileManager?style=flat&color=%23238636)
-# **[Online Demo](https://filemanager.yigitgenc.com/)**
-[<img alt="Deployed with FTP Deploy Action" src="https://img.shields.io/badge/Deployed With-FTP DEPLOY ACTION-%3CCOLOR%3E?style=for-the-badge&color=0077b6">](https://github.com/SamKirkland/FTP-Deploy-Action)[](url)
+[![NuGet version (YG.ASPNetCore.FileManager)](https://img.shields.io/nuget/v/YG.ASPNetCore.FileManager)](https://www.nuget.org/packages/YG.ASPNetCore.FileManager/)  
+![NuGet Downloads](https://img.shields.io/nuget/dt/YG.ASPNetCore.FileManager?style=flat&color=%23238636)
 
-![YG.ASPNetCore.FileManager](https://github.com/yigitgnc/YG.ASPNetCore.FileManager/blob/master/YG.ASPNetCore.FileManager.png?raw=true "YG.ASPNetCore.FileManager")
+# **[Online Demo](https://filemanager.yigitgenc.com/)**
+
+![<img alt="Deployed with FTP Deploy Action" src="https://img.shields.io/badge/Deployed With-FTP DEPLOY ACTION-%3CCOLOR%3E?style=for-the-badge&color=0077b6">](https://github.com/SamKirkland/FTP-Deploy-Action)[](url)
+
+![YG.ASPNetCore.FileManager](https://raw.githubusercontent.com/yigitgnc/YG.ASPNetCore.FileManager/master/YG.ASPNetCore.FileManager.png "YG.ASPNetCore.FileManager")
 
 ## Features:
 -  File Encryption (The primary goal of encryption is to protect your files in the event of a data breach, whether caused by a vulnerability in the hosting provider or by direct file access attempts.)
@@ -25,8 +28,8 @@
 -  Ability to control disk space usage
 -  and more ...
 
-![YG.ASPNetCore.FileManager Light Mode](https://github.com/yigitgnc/YG.ASPNetCore.FileManager/blob/master/Light-min.png?raw=true "YG.ASPNetCore.FileManager Light Mode")
-![YG.ASPNetCore.FileManager Dark Mode](https://github.com/yigitgnc/YG.ASPNetCore.FileManager/blob/master/Dark-min.png?raw=true "YG.ASPNetCore.FileManager Dark Mode")
+![YG.ASPNetCore.FileManager Light Mode](https://raw.githubusercontent.com/yigitgnc/YG.ASPNetCore.FileManager/master/Light-min.png "YG.ASPNetCore.FileManager Light Mode")
+![YG.ASPNetCore.FileManager Dark Mode](https://raw.githubusercontent.com/yigitgnc/YG.ASPNetCore.FileManager/master/Dark-min.png"YG.ASPNetCore.FileManager Dark Mode")
 
 ## How to Install:
 At first you should install  [YG.ASPNetCore.FileManager from NuGet](https://www.nuget.org/packages/YG.ASPNetCore.FileManager/):
@@ -49,7 +52,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 // YG.AspNetCore.FileManager -------
-builder.Services.AddHgoFileManager();
+builder.Services.AddYGFileManager();
 //-----------------------------------
 
 var app = builder.Build();
@@ -66,7 +69,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 // YG.AspNetCore.FileManager -------
-app.UseHgoFileManager();
+app.UseYGFileManager();
 //-----------------------------------
 
 app.UseRouting();
@@ -82,7 +85,7 @@ app.Run();
 Now you need to create an `Action Method` to handle server side operations, so open (or create) a `Controller` class and add the following action method:
 ```cs
 [HttpPost, HttpGet]
-public async Task<IActionResult> HgoApi(string id, Command command, string parameters, IFormFile file)
+public async Task<IActionResult> YgApi(string id, Command command, string parameters, IFormFile file)
 {
     return await _processor.ProcessCommandAsync(id, command, parameters, file);
 }
@@ -102,9 +105,10 @@ Now you can add `YG.ASPNetCore.FileManager` component view to any razor page or 
         @await Component.InvokeAsync("FileManagerComponent", new FileManagerModel(){
             Id = "FM1",
             RootFolder = "files",
-            ApiEndPoint = Url.Action("HgoApi"),
+            ApiEndPoint = Url.Action("YgApi"),
             Config = new FileManagerConfig(){
                 UseEncryption = true,
+                UseRecycleBin = true,
                 EncryptionKey = "<Your Super Secret Encryption Key>",
                 DisabledFunctions = { Command.Delete, Command.Rename },
                 Language = new TurkishLanguage(),                
@@ -121,7 +125,7 @@ Also you need to reference YG.ASPNetCore.FileManager JavaScript and CSS files to
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     @*YG.AspNetCore.FileManager Styles*@
-    @this.RenderHgoFileManagerCss(true)
+    @this.RenderYGFileManagerCss(true)
     @*---------------------------------*@
 </head>
 <body>
@@ -130,9 +134,10 @@ Also you need to reference YG.ASPNetCore.FileManager JavaScript and CSS files to
         @await Component.InvokeAsync("FileManagerComponent", new FileManagerModel(){
             Id = "FM1",
             RootFolder = "files",
-            ApiEndPoint = Url.Action("HgoApi"),
+            ApiEndPoint = Url.Action("YgApi"),
             Config = new FileManagerConfig(){
                 UseEncryption = true,
+                UseRecycleBin = true,
                 EncryptionKey = "<Your Super Secret Encryption Key>",
                 DisabledFunctions = { Command.Delete, Command.Rename },
                 Language = new TurkishLanguage(),                
@@ -147,7 +152,7 @@ Also you need to reference YG.ASPNetCore.FileManager JavaScript and CSS files to
     @*----------------------------------*@
 
     @*YG.AspNetCore.FileManager Scripts*@
-    @this.RenderHgoFileManagerJavaScripts()
+    @this.RenderYGFileManagerJavaScripts()
     @*----------------------------------*@
 </body>
 </html>
@@ -157,7 +162,7 @@ For more information please check the following sample projects:
 - [ASP.Net Core Razor Pages](https://github.com/yigitgnc/YG.ASPNetCore.FileManager/tree/master/test/YG.ASPNetCore.FileManager.RazorPages.Test)
 
 ### Note:
-YG.ASPNetCore.FileManager depends on jQuery library, so you need reference jQuery library before calling `RenderHgoFileManagerJavaScripts()` (If you don't it will automatically add jquery in newer versions)
+YG.ASPNetCore.FileManager depends on jQuery library, so you need reference jQuery library before calling `RenderYGFileManagerJavaScripts()` (If you don't it will automatically add jquery in newer versions)
 
 ### Third-party JS libraries which I used in this project:
 - [context-js](https://github.com/heapoverride/context-js)

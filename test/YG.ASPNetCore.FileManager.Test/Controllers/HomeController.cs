@@ -29,6 +29,7 @@ namespace YG.ASPNetCore.FileManager.Test.Controllers
                 Language = new EnglishLanguage(),
                 UseEncryption = true,
                 EncryptionKey = "1234567890123456",
+                UseRecycleBin = true,
             };
 
             return View(config);

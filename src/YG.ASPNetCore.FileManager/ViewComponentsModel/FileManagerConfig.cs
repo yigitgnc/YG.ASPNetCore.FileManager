@@ -102,11 +102,20 @@ namespace YG.ASPNetCore.FileManager.ViewComponentsModel
 
         /// <summary>
         /// Use encryption (EncryptionKey must be provided if UseEncryption is true.)
+        /// <para>The primary goal of encryption is to protect your files in the event of a data breach, whether caused by a vulnerability in the hosting provider or by direct file access attempts.</para>
+        /// <para><b>Reminder:</b> Consider using a secure key management system, environment variables, or a secrets manager to store your encryption key securely.</para>
         /// </summary>
         public bool UseEncryption { get; set; } = false;
 
         /// <summary>
         /// Use Recycle Bin (default is true)
+        /// <para>When a file is deleted, it is moved to the Recycle Bin instead of being permanently deleted.</para>
+        /// <para>Recycle bin acts like a normnal folder in the file manager.</para>
+        /// <para>It can be used to restore deleted files.</para>
+        /// <para>Recycle Bin is enabled by default.</para>
+        /// <para>It can be disabled by setting UseRecycleBin to false.</para>
+        /// <para>When UseRecycleBin is disabled, deleted files are permanently deleted.</para>
+        /// <para>When UseRecycleBin is enabled, deleted files are moved to the Recycle Bin.</para>
         /// </summary>
         public bool UseRecycleBin { get; set; } = true;
     }
