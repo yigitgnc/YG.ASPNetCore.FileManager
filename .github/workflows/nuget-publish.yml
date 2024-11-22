@@ -27,34 +27,31 @@ jobs:
       - name: Fetch Remote Tags
         run: git fetch --tags
 
-      - name: Check for Existing Tag
-        id: check_tags
+      - name: Check if Tag Exists Remotely
+        id: check_tag
         run: |
-          # Check if the tag exists in the remote repository
-          TAG_EXISTS=$(git ls-remote --tags origin | grep -o "refs/tags/${{ env.CURRENT_VERSION }}" || true)
-          if [ -n "$TAG_EXISTS" ]; then
+          REMOTE_TAG_EXISTS=$(git ls-remote --tags origin | grep -w "refs/tags/${{ env.CURRENT_VERSION }}" || true)
+          if [ -n "$REMOTE_TAG_EXISTS" ]; then
             echo "TAG_EXISTS=true" >> $GITHUB_ENV
           else
             echo "TAG_EXISTS=false" >> $GITHUB_ENV
           fi
 
-      - name: Handle Versioning
-        id: handle_versioning
+      - name: Increment Version if Tag Exists
+        id: increment_version
         run: |
           if [ "${{ env.TAG_EXISTS }}" == "true" ]; then
-            # Increment version by patch (e.g. 9.0.2 -> 9.0.3)
+            # Increment the patch version
             IFS='.' read -r MAJOR MINOR PATCH <<< "${{ env.CURRENT_VERSION }}"
             NEW_PATCH=$((PATCH + 1))
             NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
-            # Update the version in csproj file
             sed -i "s|<Version>${{ env.CURRENT_VERSION }}</Version>|<Version>$NEW_VERSION</Version>|" src/YG.ASPNetCore.FileManager/YG.ASPNetCore.FileManager.csproj
             echo "FINAL_VERSION=$NEW_VERSION" >> $GITHUB_ENV
           else
-            # No increment if tag doesn't exist
             echo "FINAL_VERSION=${{ env.CURRENT_VERSION }}" >> $GITHUB_ENV
           fi
 
-      - name: Commit Changes and Create Tag
+      - name: Commit Changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -64,11 +61,12 @@ jobs:
             git commit -am "Prepare release ${{ env.FINAL_VERSION }}"
           fi
 
-          # Check if the tag already exists remotely before creating
+      - name: Create and Push Tag
+        run: |
+          # Verify tag existence again before creating and pushing
           if git ls-remote --tags origin | grep -q "refs/tags/${{ env.FINAL_VERSION }}"; then
-            echo "Tag ${{ env.FINAL_VERSION }} already exists. Skipping tag creation."
+            echo "Tag ${{ env.FINAL_VERSION }} already exists. Skipping creation."
           else
-            # Create and push the new tag
             git tag "${{ env.FINAL_VERSION }}"
             git push origin "${{ env.FINAL_VERSION }}"
           fi
@@ -82,13 +80,11 @@ jobs:
       - name: Pack
         run: dotnet pack --configuration Release --output ./output
 
-      # Publish to NuGet.org
       - name: Publish to NuGet
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
         run: dotnet nuget push ./output/*.nupkg -s https://api.nuget.org/v3/index.json -k $NUGET_API_KEY
 
-      # Publish to GitHub Packages
       - name: Publish to GitHub Packages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
