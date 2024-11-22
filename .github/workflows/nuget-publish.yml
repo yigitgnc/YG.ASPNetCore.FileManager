@@ -27,29 +27,29 @@ jobs:
       - name: Fetch Remote Tags
         run: git fetch --tags
 
-      - name: Check if Tag Exists Remotely
-        id: check_tag
-        run: |
-          REMOTE_TAG_EXISTS=$(git ls-remote --tags origin | grep -w "refs/tags/${{ env.CURRENT_VERSION }}" || true)
-          if [ -n "$REMOTE_TAG_EXISTS" ]; then
-            echo "TAG_EXISTS=true" >> $GITHUB_ENV
-          else
-            echo "TAG_EXISTS=false" >> $GITHUB_ENV
-          fi
-
-      - name: Increment Version if Tag Exists
+      - name: Increment Version Until Tag Is Unique
         id: increment_version
         run: |
-          if [ "${{ env.TAG_EXISTS }}" == "true" ]; then
-            # Increment the patch version
-            IFS='.' read -r MAJOR MINOR PATCH <<< "${{ env.CURRENT_VERSION }}"
-            NEW_PATCH=$((PATCH + 1))
-            NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
-            sed -i "s|<Version>${{ env.CURRENT_VERSION }}</Version>|<Version>$NEW_VERSION</Version>|" src/YG.ASPNetCore.FileManager/YG.ASPNetCore.FileManager.csproj
-            echo "FINAL_VERSION=$NEW_VERSION" >> $GITHUB_ENV
-          else
-            echo "FINAL_VERSION=${{ env.CURRENT_VERSION }}" >> $GITHUB_ENV
-          fi
+          CURRENT_VERSION=${{ env.CURRENT_VERSION }}
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
+          
+          while true; do
+            # Check if the tag exists remotely
+            REMOTE_TAG_EXISTS=$(git ls-remote --tags origin | grep -w "refs/tags/$MAJOR.$MINOR.$PATCH" || true)
+            
+            if [ -z "$REMOTE_TAG_EXISTS" ]; then
+              # If the tag doesn't exist, finalize the version
+              FINAL_VERSION="$MAJOR.$MINOR.$PATCH"
+              break
+            else
+              # Increment the patch version
+              PATCH=$((PATCH + 1))
+            fi
+          done
+          
+          # Update the version in the project file
+          sed -i "s|<Version>${{ env.CURRENT_VERSION }}</Version>|<Version>$FINAL_VERSION</Version>|" src/YG.ASPNetCore.FileManager/YG.ASPNetCore.FileManager.csproj
+          echo "FINAL_VERSION=$FINAL_VERSION" >> $GITHUB_ENV
 
       - name: Commit Changes
         run: |
@@ -63,13 +63,8 @@ jobs:
 
       - name: Create and Push Tag
         run: |
-          # Verify tag existence again before creating and pushing
-          if git ls-remote --tags origin | grep -q "refs/tags/${{ env.FINAL_VERSION }}"; then
-            echo "Tag ${{ env.FINAL_VERSION }} already exists. Skipping creation."
-          else
-            git tag "${{ env.FINAL_VERSION }}"
-            git push origin "${{ env.FINAL_VERSION }}"
-          fi
+          git tag "${{ env.FINAL_VERSION }}"
+          git push origin "${{ env.FINAL_VERSION }}"
 
       - name: Restore Dependencies
         run: dotnet restore
