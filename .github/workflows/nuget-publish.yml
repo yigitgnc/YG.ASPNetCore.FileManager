@@ -30,7 +30,8 @@ jobs:
       - name: Check for Existing Tag
         id: check_tags
         run: |
-          TAG_EXISTS=$(git tag -l "${{ env.CURRENT_VERSION }}")
+          # Check if the tag exists in the remote repository
+          TAG_EXISTS=$(git ls-remote --tags origin | grep -o "refs/tags/${{ env.CURRENT_VERSION }}" || true)
           if [ -n "$TAG_EXISTS" ]; then
             echo "TAG_EXISTS=true" >> $GITHUB_ENV
           else
@@ -53,7 +54,7 @@ jobs:
             echo "FINAL_VERSION=${{ env.CURRENT_VERSION }}" >> $GITHUB_ENV
           fi
 
-      - name: Create Git Tag
+      - name: Commit Changes and Create Tag
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -63,9 +64,14 @@ jobs:
             git commit -am "Prepare release ${{ env.FINAL_VERSION }}"
           fi
 
-          # Create and push the new tag
-          git tag "${{ env.FINAL_VERSION }}"
-          git push origin "${{ env.FINAL_VERSION }}"
+          # Check if the tag already exists remotely before creating
+          if git ls-remote --tags origin | grep -q "refs/tags/${{ env.FINAL_VERSION }}"; then
+            echo "Tag ${{ env.FINAL_VERSION }} already exists. Skipping tag creation."
+          else
+            # Create and push the new tag
+            git tag "${{ env.FINAL_VERSION }}"
+            git push origin "${{ env.FINAL_VERSION }}"
+          fi
 
       - name: Restore Dependencies
         run: dotnet restore
