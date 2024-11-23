@@ -18,35 +18,30 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Fetch all tags
-        run: git fetch --tags
-
       - name: Determine Next Version
         id: determine_version
         run: |
-          # Path to the correct .csproj file
-          CSPROJ_FILE="src/YG.ASPNetCore.FileManager/YG.ASPNetCore.FileManager.csproj"
-
-          # Get the current version from the .csproj file
-          CURRENT_VERSION=$(grep -oP '(?<=<Version>).*?(?=</Version>)' "$CSPROJ_FILE")
+          # Fetch the current version from the .csproj file
+          CURRENT_VERSION=$(grep -oP '(?<=<Version>).*?(?=</Version>)' src/YG.ASPNetCore.FileManager/YG.ASPNetCore.FileManager.csproj)
           IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
 
-          # Start with the current version
-          NEW_VERSION="$CURRENT_VERSION"
+          # Fetch all tags from the remote repository
+          git fetch --tags
 
-          # Increment PATCH until an unused tag is found
+          # Determine the next available version
+          NEW_VERSION="$CURRENT_VERSION"
           while git tag --list "$NEW_VERSION" > /dev/null; do
             PATCH=$((PATCH + 1))
             NEW_VERSION="$MAJOR.$MINOR.$PATCH"
           done
 
           # Output the new version
-          echo "CURRENT_VERSION=$CURRENT_VERSION" >> $GITHUB_ENV
+          echo "New Version: $NEW_VERSION"
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
       - name: Update Version in .csproj
         run: |
-          # Update the <Version> in the specified .csproj file
+          # Replace the <Version> tag in the .csproj file with the new version
           sed -i "s|<Version>.*</Version>|<Version>${{ env.NEW_VERSION }}</Version>|" src/YG.ASPNetCore.FileManager/YG.ASPNetCore.FileManager.csproj
 
           # Stage the change for committing
