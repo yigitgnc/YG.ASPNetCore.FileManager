@@ -2,8 +2,7 @@
 
 #### YG.ASPNetCore.FileManager is an "enhanced" fork of HGO.ASPNetCore.FileManager free, open source, feature rich and easy to use file explorer/manager component for ASP.Net Core 6 and above with MIT license!
 
-[![NuGet version (YG.ASPNetCore.FileManager)](https://img.shields.io/nuget/v/YG.ASPNetCore.FileManager)](https://www.nuget.org/packages/YG.ASPNetCore.FileManager/)  
-![NuGet Downloads](https://img.shields.io/nuget/dt/YG.ASPNetCore.FileManager?style=flat&color=%23238636)
+[![NuGet version (YG.ASPNetCore.FileManager)](https://img.shields.io/nuget/v/YG.ASPNetCore.FileManager)](https://www.nuget.org/packages/YG.ASPNetCore.FileManager/)  ![NuGet Downloads](https://img.shields.io/nuget/dt/YG.ASPNetCore.FileManager?style=flat&color=%23238636)
 
 # **[Online Demo](https://filemanager.yigitgenc.com/)**
 
