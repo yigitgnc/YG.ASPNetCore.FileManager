@@ -47,7 +47,7 @@ jobs:
             fi
           done
           
-          # Update the version in the project file
+          # Update the version in the .csproj file
           sed -i "s|<Version>${{ env.CURRENT_VERSION }}</Version>|<Version>$FINAL_VERSION</Version>|" src/YG.ASPNetCore.FileManager/YG.ASPNetCore.FileManager.csproj
           echo "FINAL_VERSION=$FINAL_VERSION" >> $GITHUB_ENV
 
