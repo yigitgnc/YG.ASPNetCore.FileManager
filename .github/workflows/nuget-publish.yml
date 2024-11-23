@@ -21,11 +21,11 @@ jobs:
       - name: Increment Version
         id: increment_version
         run: |
-          CURRENT_VERSION=$(grep -oP '(?<=<Version>).*?(?=</Version>)' src/HGO.ASPNetCore.FileManager/HGO.ASPNetCore.FileManager.csproj)
+          CURRENT_VERSION=$(grep -oP '(?<=<Version>).*?(?=</Version>)' src/YG.ASPNetCore.FileManager/YG.ASPNetCore.FileManager.csproj)
           IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
           NEW_PATCH=$((PATCH + 1))
           NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
-          sed -i "s|<Version>$CURRENT_VERSION</Version>|<Version>$NEW_VERSION</Version>|" src/HGO.ASPNetCore.FileManager/HGO.ASPNetCore.FileManager.csproj
+          sed -i "s|<Version>$CURRENT_VERSION</Version>|<Version>$NEW_VERSION</Version>|" src/YG.ASPNetCore.FileManager/YG.ASPNetCore.FileManager.csproj
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
       - name: Check for existing tags
