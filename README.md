@@ -29,7 +29,7 @@
 -  and more ...
 
 ![YG.ASPNetCore.FileManager Light Mode](https://raw.githubusercontent.com/yigitgnc/YG.ASPNetCore.FileManager/master/Light-min.png "YG.ASPNetCore.FileManager Light Mode")
-![YG.ASPNetCore.FileManager Dark Mode](https://raw.githubusercontent.com/yigitgnc/YG.ASPNetCore.FileManager/master/Dark-min.png"YG.ASPNetCore.FileManager Dark Mode")
+![YG.ASPNetCore.FileManager Dark Mode](https://raw.githubusercontent.com/yigitgnc/YG.ASPNetCore.FileManager/master/Dark-min.png "YG.ASPNetCore.FileManager Dark Mode")
 
 ## How to Install:
 At first you should install  [YG.ASPNetCore.FileManager from NuGet](https://www.nuget.org/packages/YG.ASPNetCore.FileManager/):
