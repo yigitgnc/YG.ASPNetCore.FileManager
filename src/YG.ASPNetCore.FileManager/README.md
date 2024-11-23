@@ -124,7 +124,7 @@ Also you need to reference YG.ASPNetCore.FileManager JavaScript and CSS files to
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     @*YG.AspNetCore.FileManager Styles*@
-    @this.RenderYGFileManagerCss(true)
+    @this.RenderYGfilemanagerCss(true)
     @*---------------------------------*@
 </head>
 <body>
@@ -151,7 +151,7 @@ Also you need to reference YG.ASPNetCore.FileManager JavaScript and CSS files to
     @*----------------------------------*@
 
     @*YG.AspNetCore.FileManager Scripts*@
-    @this.RenderYGFileManagerJavaScripts()
+    @this.RenderYGfilemanagerJavaScripts()
     @*----------------------------------*@
 </body>
 </html>
@@ -161,7 +161,7 @@ For more information please check the following sample projects:
 - [ASP.Net Core Razor Pages](https://github.com/yigitgnc/YG.ASPNetCore.FileManager/tree/master/test/YG.ASPNetCore.FileManager.RazorPages.Test)
 
 ### Note:
-YG.ASPNetCore.FileManager depends on jQuery library, so you need reference jQuery library before calling `RenderYGFileManagerJavaScripts()` (If you don't it will automatically add jquery in newer versions)
+YG.ASPNetCore.FileManager depends on jQuery library, so you need reference jQuery library before calling `RenderYGfilemanagerJavaScripts()` (If you don't it will automatically add jquery in newer versions)
 
 ### Third-party JS libraries which I used in this project:
 - [context-js](https://github.com/heapoverride/context-js)
