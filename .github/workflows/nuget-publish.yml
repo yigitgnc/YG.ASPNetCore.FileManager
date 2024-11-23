@@ -19,12 +19,12 @@ jobs:
           dotnet-version: '8.0.x'
 
       # Debugging steps
-      - name: Debugging: Check Git status
+      - name: Check Git status
         run: |
           git status
           git remote -v
 
-      - name: Debugging: Check Remote URL
+      - name: Check Remote URL
         run: git remote show origin
 
       - name: Determine Next Version
