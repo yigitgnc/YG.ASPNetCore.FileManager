@@ -18,36 +18,51 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      # Debugging steps (updated names)
-      - name: Debugging Check Git status
+      # Debugging steps
+      - name: Debugging: Check Git status
         run: |
           git status
           git remote -v
 
-      - name: Debugging Check Remote URL
+      - name: Debugging: Check Remote URL
         run: git remote show origin
 
       - name: Determine Next Version
         id: determine_version
         run: |
-          # Fetch only the latest tags to speed up the process
-          git fetch --depth=1 --tags
-
           # Fetch the current version from the .csproj file
           CURRENT_VERSION=$(grep -oP '(?<=<Version>).*?(?=</Version>)' src/YG.ASPNetCore.FileManager/YG.ASPNetCore.FileManager.csproj)
           IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
 
-          # Debugging: List available tags to check if it fetches the right ones
+          # Fetch all tags from the remote repository
+          git fetch --tags
+
+          # Debugging: Check fetched tags
           git tag -l
 
-          # Determine the next available version
+          # Maximum number of attempts to check for an available version
+          MAX_ATTEMPTS=100
+          ATTEMPT=0
+
+          # Set the initial version based on current version
           NEW_VERSION="$CURRENT_VERSION"
-          while git tag --list "$NEW_VERSION" > /dev/null; do
+
+          # While loop to find the next available version tag
+          while git tag --list "$NEW_VERSION" > /dev/null && [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+            # Increment the patch version
             PATCH=$((PATCH + 1))
             NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+            
+            # Increment attempt counter
+            ATTEMPT=$((ATTEMPT + 1))
           done
 
-          # Output the new version
+          # If the max attempts were reached, print a warning
+          if [ $ATTEMPT -ge $MAX_ATTEMPTS ]; then
+            echo "Warning: Reached maximum attempts to find a unique version tag. Please check the tag strategy."
+          fi
+
+          # Output the new version and set it in the environment
           echo "New Version: $NEW_VERSION"
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
