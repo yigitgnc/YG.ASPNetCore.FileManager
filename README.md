@@ -7,7 +7,7 @@
 
 # **[Online Demo](https://filemanager.yigitgenc.com/)**
 
-[<img alt="Demo Website deployed with FTP DEPLOY ACTION" src="https://img.shields.io/badge/Demo Website deployed with-FTP DEPLOY ACTION-%3CCOLOR%3E?style=for-the-badge&color=297FA9">](https://github.com/SamKirkland/FTP-Deploy-Action)
+[![NuGet version (YG.ASPNetCore.FileManager)](https://img.shields.io/badge/Demo%20Website%20deployed%20with-FTP%20DEPLOY%20ACTION-%3CCOLOR%3E?style=for-the-badge&color=297FA9)](https://github.com/SamKirkland/FTP-Deploy-Action)  
 
 ![YG.ASPNetCore.FileManager](https://raw.githubusercontent.com/yigitgnc/YG.ASPNetCore.FileManager/master/YG.ASPNetCore.FileManager.png "YG.ASPNetCore.FileManager")
 
