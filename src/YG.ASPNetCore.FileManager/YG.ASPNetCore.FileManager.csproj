@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
@@ -34,18 +34,33 @@
 		<PackageId>$(AssemblyName)</PackageId>
 		<AssemblyVersion>1.0.0.0</AssemblyVersion>
 		<FileVersion>1.0.0.0</FileVersion>
-		<Version>9.1.1</Version>
+		<Version>10.0.0</Version>
 		<PackageReleaseNotes>
-			-package cleanup
+			- Added .NET 10 support (multi-target: net8.0, net9.0, net10.0)
+			- Enhanced text editor with file-type detection (JSON, JSONC, CSS, JS, Python, SQL, YAML, Markdown, etc.)
+			- Editor now stays open after save with toast notifications
+			- Added Ctrl+S keyboard shortcut for saving
+			- Added unsaved changes indicator and warning before closing
+			- Removed unnecessary dependencies
 		</PackageReleaseNotes>
 	</PropertyGroup>
 
-	<ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="8.0.11" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="9.0.0" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="10.0.0-*" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
 		<PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="9.0.0" />
 		<PackageReference Include="SharpCompress" Version="0.38.0" />
-		<PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.0" />
 		<PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.0" />
 	</ItemGroup>
 
