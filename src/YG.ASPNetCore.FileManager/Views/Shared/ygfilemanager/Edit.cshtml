@@ -31,6 +31,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/javascript/javascript.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/css/css.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/clike/clike.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/php/php.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/sql/sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/shell/shell.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/markdown/markdown.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/yaml/yaml.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/scroll/annotatescrollbar.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/search/search.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/search/searchcursor.min.js"></script>
@@ -96,27 +103,111 @@
                 background-color: #585858;
                 transition: all .25s linear;
             }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 9999;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+            .toast.show {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .toast.success {
+                background-color: #22c55e;
+            }
+
+            .toast.error {
+                background-color: #ef4444;
+            }
+
+        .unsaved-indicator {
+            color: #fbbf24;
+            margin-left: 8px;
+        }
     </style>
 </head>
 <body>
     <div class="header">
-        <span>@viewModel.Language.FileName: @viewModel.FileFullPath</span>
+        <span>@viewModel.Language.FileName: @viewModel.FileFullPath<span id="unsaved-indicator" class="unsaved-indicator" style="display:none;">●</span></span>
         <div>
-            <button class="saveBtn" onclick="SaveDocument()">@viewModel.Language.Save</button>
+            <button class="saveBtn" onclick="SaveDocument()">@viewModel.Language.Save (Ctrl+S)</button>
             <button class="closeBtn" onclick="window.close()">@viewModel.Language.Close</button>
         </div>
     </div>
     <textarea id="code-editor">@viewModel.FileData</textarea>
+    <div id="toast" class="toast"></div>
 
     <script type="text/javascript">
         CodeMirror.commands.autocomplete = function (cm) {
             cm.showHint({ hint: CodeMirror.hint.anyword });
         }
 
+        // File extension to CodeMirror mode mapping
+        function getModeForFile(filename) {
+            var ext = filename.split('.').pop().toLowerCase();
+            var modes = {
+                'js': 'javascript',
+                'jsx': 'javascript',
+                'ts': 'javascript',
+                'tsx': 'javascript',
+                'json': { name: 'javascript', json: true },
+                'jsonc': { name: 'javascript', json: true },
+                'css': 'css',
+                'scss': 'css',
+                'less': 'css',
+                'html': 'htmlmixed',
+                'htm': 'htmlmixed',
+                'cshtml': 'htmlmixed',
+                'xml': 'xml',
+                'svg': 'xml',
+                'php': 'php',
+                'py': 'python',
+                'sql': 'sql',
+                'sh': 'shell',
+                'bash': 'shell',
+                'md': 'markdown',
+                'markdown': 'markdown',
+                'yml': 'yaml',
+                'yaml': 'yaml',
+                'cs': 'text/x-csharp',
+                'java': 'text/x-java',
+                'c': 'text/x-csrc',
+                'cpp': 'text/x-c++src',
+                'h': 'text/x-csrc'
+            };
+            return modes[ext] || 'htmlmixed';
+        }
+
+        function showToast(message, type) {
+            var toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast ' + type + ' show';
+            setTimeout(function () {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
         var editor = undefined;
+        var hasUnsavedChanges = false;
+        var originalContent = '';
+
         document.addEventListener('DOMContentLoaded', function () {
+            var filename = '@viewModel.FileName';
+            var mode = getModeForFile(filename);
+
             editor = CodeMirror.fromTextArea(document.getElementById('code-editor'), {
-                mode: "htmlmixed",
+                mode: mode,
                 styleActiveLine: true,
                 lineNumbers: true,
                 autoCloseBrackets: true,
@@ -124,26 +215,56 @@
                 matchTags: { bothTags: true },
                 matchBrackets: { bothBrackets: true },
                 highlightSelectionMatches: { showToken: /\w/ },
-                extraKeys: { "Ctrl-Space": "autocomplete" },
-                viewportMargin: Infinity
+                extraKeys: {
+                    "Ctrl-Space": "autocomplete",
+                    "Ctrl-S": function (cm) { SaveDocument(); }
+                },
+                viewportMargin: Infinity,
+                indentUnit: 4,
+                tabSize: 4,
+                indentWithTabs: false,
+                foldGutter: true,
+                lineWrapping: false
             });
             editor.setSize("100%", "100%");
-            @Html.Raw(darkMode ? "editor.setOption('theme', 'ayu-mirage')" : "");
+            @Html.Raw(darkMode ? "editor.setOption('theme', 'ayu-mirage');" : "")
+
+            originalContent = editor.getValue();
+
+            // Track unsaved changes
+            editor.on('change', function () {
+                var currentContent = editor.getValue();
+                hasUnsavedChanges = currentContent !== originalContent;
+                document.getElementById('unsaved-indicator').style.display = hasUnsavedChanges ? 'inline' : 'none';
+            });
         }, false);
+
+        // Warn before closing with unsaved changes
+        window.addEventListener('beforeunload', function (e) {
+            if (hasUnsavedChanges) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
 
         function SaveDocument() {
             let content = editor.getValue();
 
             $.post('@Context.Request.Path', { id: '@viewModel.Id', command: "@Command.EditFile", parameters: JSON.stringify({ FilePath: '@viewModel.FileFullPath.ToString().Replace("\\", "\\\\")', Data: content }) }, function (data) {
                 if (data.message === 'OK') {
-                    window.close();
+                    originalContent = content;
+                    hasUnsavedChanges = false;
+                    document.getElementById('unsaved-indicator').style.display = 'none';
+                    showToast('@viewModel.Language.Save' + 'd successfully!', 'success');
                 } else {
                     if (data.message)
-                        alert(data.message);
+                        showToast(data.message, 'error');
                     if (data.Error)
-                        alert(data.Error);
+                        showToast(data.Error, 'error');
                 }
-            }, 'json');
+            }, 'json').fail(function () {
+                showToast('Failed to save file', 'error');
+            });
         }
     </script>
 </body>

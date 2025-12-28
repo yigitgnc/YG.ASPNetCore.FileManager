@@ -1,6 +1,14 @@
-# YG.ASPNetCore.FileManager (Free & Open Source File Explorer for ASP.Net Core 6+)
+# YG.ASPNetCore.FileManager (Free & Open Source File Explorer for ASP.Net Core 8+)
 
-#### YG.ASPNetCore.FileManager is an "enhanced" fork of HGO.ASPNetCore.FileManager free, open source, feature rich and easy to use file explorer/manager component for ASP.Net Core 6 and above with MIT license!
+#### YG.ASPNetCore.FileManager is an "enhanced" fork of HGO.ASPNetCore.FileManager free, open source, feature rich and easy to use file explorer/manager component for ASP.Net Core 8, 9, and 10 with MIT license!
+
+### What's New in v10.0
+- **Multi-target support**: .NET 8, .NET 9, and .NET 10
+- **Enhanced Code Editor**: Smart file-type detection with syntax highlighting for JSON, JSONC, JavaScript, TypeScript, CSS, Python, SQL, YAML, Markdown, PHP, C#, and more
+- **Improved Save Experience**: Editor stays open after save with toast notifications - no more reopening files!
+- **Keyboard Shortcuts**: Ctrl+S to save instantly
+- **Unsaved Changes Indicator**: Yellow dot shows when you have unsaved changes
+- **Close Warning**: Prevents accidental data loss when closing with unsaved changes
 
 [![NuGet version (YG.ASPNetCore.FileManager)](https://img.shields.io/nuget/v/YG.ASPNetCore.FileManager)](https://www.nuget.org/packages/YG.ASPNetCore.FileManager/)  ![NuGet Downloads](https://img.shields.io/nuget/dt/YG.ASPNetCore.FileManager?style=flat&color=%23238636)
 
@@ -11,7 +19,10 @@
 ![YG.ASPNetCore.FileManager](https://raw.githubusercontent.com/yigitgnc/YG.ASPNetCore.FileManager/master/YG.ASPNetCore.FileManager.png "YG.ASPNetCore.FileManager")
 
 ## Features:
--  File Encryption (The primary goal of encryption is to protect your files in the event of a data breach, whether caused by a vulnerability in the hosting provider or by direct file access attempts.)
+-  **NEW!** Enhanced Code Editor with smart syntax highlighting for 20+ file types (JSON, JSONC, JS, TS, CSS, Python, SQL, YAML, Markdown, PHP, C#, etc.)
+-  **NEW!** Keyboard shortcuts (Ctrl+S to save) with toast notifications
+-  **NEW!** Unsaved changes indicator and close warning to prevent data loss
+-  File Encryption (Protect your files in the event of a data breach)
 -  Multiple Language Support with fully customizable language option
 -  Enum Member Access for type safety
 -  Manage server's files from client side
@@ -19,7 +30,7 @@
 -  Compress & extract archive files (Rar, Zip, Tar, Tar.GZip, Tar.BZip2, Tar.LZip, Tar.XZ, GZip, 7Zip)
 -  Download & upload
 -  Rename & delete files/folders
--  Edit text based files with full feature code editor ([CodeMirror](https://codemirror.net/)) (e.g.: .css, .html, .js, ...)
+-  Full-featured code editor powered by [CodeMirror](https://codemirror.net/)
 -  Create new file/folder
 -  Cross platform (Compatible with Windows & Linux & macOS file system)
 -  Search
