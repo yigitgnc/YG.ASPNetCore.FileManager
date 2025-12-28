@@ -34,7 +34,7 @@
 		<PackageId>$(AssemblyName)</PackageId>
 		<AssemblyVersion>1.0.0.0</AssemblyVersion>
 		<FileVersion>1.0.0.0</FileVersion>
-		<Version>10.0.0</Version>
+		<Version>10.0.2</Version>
 		<PackageReleaseNotes>
 			- Added .NET 10 support (multi-target: net8.0, net9.0, net10.0)
 			- Enhanced text editor with file-type detection (JSON, JSONC, CSS, JS, Python, SQL, YAML, Markdown, etc.)
